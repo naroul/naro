@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录页面</title>
+</head>
+<body>
+<h1>用户登录</h1>
+<form action="{% url 'exblog:Login_action' %}" method="post">
+    {% csrf_token %}
+    <label>用户昵称：
+    <input type="text" name="Usersname" />
+    <input type="reset" value="重置">
+    </label>
+    <br/><br/>
+    <label>密码：
+    <input type="password" name="Password">
+    <input type="reset" value="重置">
+    </label>
+    <br/>
+    <input type="submit" value="登录">
+    <br/>
+    <a href="{% url 'exblog:Login_action' %}">还没账号，注册一个账号</a>
+</form>
+</body>
+</html>

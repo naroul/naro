@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+    input[type=text] { width:200px; height:40px; }
+</style>
+    <meta charset="UTF-8">
+    <title>留言板</title>
+</head>
+<body>
+<h1>你正在罗浩然帅哥的留言板中</h1>
+<form action="{% url 'exblog:edit' %}" method="post" >
+    {% csrf_token %}
+    <label>请输入你想对罗浩然帅哥的话：
+        <input type="text" name="Content">
+    </label>
+    <br/>
+        <input type="submit" value="提交">
+        <input type="reset" value="重置">
+</form>
+<br/><br/><br/><br/>
+{% for x in message  %}
+    {{ x.content }}
+    <br/>
+{% endfor %}
+</body>
+</html>
