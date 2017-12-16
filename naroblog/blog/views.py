@@ -1,8 +1,10 @@
+import markdown
 from django.shortcuts import render,get_object_or_404
 from django.http import HttpResponse
 from django.http import  HttpResponseRedirect
 from django.shortcuts import render
 from .models import Post
+
 
 
 
@@ -14,7 +16,13 @@ def index(request):
     })
 
 
-def page(request,pk):
-    pages = get_object_or_404(Post, pk=pk)
-    return render(request, 'blog/page.html', context={'pages': pages})
+def detail(request,pk):
+    post = get_object_or_404(Post, pk=pk)
+    post.content = markdown.markdown(post.content,
+                                     extensions=[
+                                         'markdown.extensions.extra',
+                                         'markdown.extensions.codehilite',
+                                         'markdown.extensions.toc',
+                                     ])
+    return render(request, 'blog/detail.html', context={'post': post})
 
