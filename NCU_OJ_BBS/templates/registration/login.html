@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>登录</title>
+</head>
+<body>
+<h3>登录</h3>
+<form action="{% url 'login' %}" method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    {% for field in form %}
+        {{ field.label_tag }}
+        {{ field }}
+        {{ field.errors }}
+        {% if field.help_text %}
+            {{ field.help_text }}
+        {% endif %}
+    {% endfor %}
+    <button type="submit">登录</button>
+    <input type="hidden" name="next" value="{{ next }}"/>
+    <button type="button"><a href="{% url 'users:register' %}">注册</a></button>
+    <input type="hidden" name="next" value="{{ next }}"/>
+</form>
+<a href="{% url 'password_reset' %}">找回密码</a>
+</body>
+</html>
