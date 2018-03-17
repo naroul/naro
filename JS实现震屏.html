@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>震屏</title>
+	<script type="text/javascript">
+		window.resizeTo(500,500);
+		var loop = 0;
+		var timer;
+		var offX;
+		var offY;
+		var dir = 1;
+		
+		timer = setInterval(function(){
+		window.moveTo(500,180);
+		if(loop > 100){clearInterval(timer);}
+		dir = Math.random()*10 > 5 ? 1 : -1;
+		offX = Math.random()*20*dir;
+		offY = Math.random()*20*dir*-1;
+		window.moveBy(offX,offY);
+		loop++;
+		},10
+		)
+	</script>
+</head>
+<body>
+
+</body>
+</html>
