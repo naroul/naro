@@ -1,0 +1,133 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta charset="UTF-8">
+    <title>注册</title>
+    <style type="text/css">
+      html,body{margin:0; padding:0; height:100%;}
+      input{ height:25px; border: 1px solid #B3B1B1; outline:none; 
+      	border-radius:8px; 
+      	-moz-border-radius:8px; /* Old Firefox */}
+ 
+      /* 头部部分 */
+      .top{height:15%; background:#e97c62; position:relative;} 
+      .log{height:65%; width:500px; position:absolute; top:35%; left:50%; margin-left:-250px; background:#e97c62; text-align:center;}
+      .h1{font-family:"Microsoft YaHei"; font-size:35px; color:white; font-weight:bold;}
+      .h2{font-family:"Microsoft YaHei"; font-size:20px; color:white;}
+
+      /* 内容表单部分 */
+      .main{height:70%; position: relative;}
+      .form{height:100%; margin-left:25%; margin-right:25%; margin-top:0; margin-bottom:0; padding:0; background:#62D8ED; box-shadow: 10px 10px 5px #888888; border:4px solid #B7B5B5; border-radius:0 0 15px 15px; -moz-border-radius:15px; outline:none;}
+      .background_left{height:12%; width:25%; margin-left:0; background:#e97c62; position: absolute;} 
+      .background_right{height:12%; width:25%; right:0; top: 0; background:#e97c62; position: absolute;} 
+
+      .username_div{height: 90px; position:relative; }
+      .username_position{height: 30px; width:100%; line-height: 30px; bottom: 30px; position: absolute;}
+      .username_label{font-family:"SimHei"; font-size:20px; left:40px; position:absolute;}
+      .username{left:30%; position:absolute; width: 100px;}
+
+      .email_div{height: 90px; position:relative;}
+      .email_position{height: 30px; width:100%; line-height: 30px; bottom: 30px; position: absolute;}
+      .email_label{font-family:"SimHei"; font-size:20px; left:40px; position:absolute;}
+      .email{left:30%; position:absolute; width: 200px;}
+
+      .password1_div{height: 90px; position:relative;}
+      .password1_position{height: 30px; width:100%; line-height: 30px; bottom: 30px; position: absolute;}
+      .password1_label{font-family:"SimHei"; font-size:20px; left:40px; position:absolute;}
+      .password1{left:30%; position:absolute; width: 150px;}
+
+      .password2_div{height: 90px; position:relative;}
+      .password2_position{height: 30px; width:100%; line-height: 30px; bottom: 30px; position: absolute;}
+      .password2_label{font-family:"SimHei"; font-size:20px; left:40px; position:absolute;}
+      .password2{left:30%; position:absolute; width: 150px;}
+
+      .sex_div{height: 170px; line-height: 50px; position:relative;}
+      .sex_label{font-family:"SimHei"; font-size:20px; left:40px; position: absolute;}
+      .sex{font-family:"SimHei"; font-size:16px; left:30%; position: absolute;}
+
+      .button_register{position: relative;}
+      .submit{font-family:"SimHei"; font-size:12px; color:#FFFFFF; background:#e97c62; width:80px; height:30px; position: absolute; left:40px; top:10px; border-radius:15px; outline:none;}
+      .reset{font-family:"SimHei"; font-size:12px; color:#040404; background:#FFFFFF; width:80px; height:30px; position: absolute; left:170px; top:10px; border-radius:15px; outline:none;}
+
+      .footer{text-align: center; font-size: 10px;}
+      .copyright{position: absolute; bottom: 5%}
+    </style>
+  </head>
+  <body>
+  	<!-- 头部部分 -->
+    <div class="top">
+    	<div class="log">
+    		<span class="h1">南大OJ-BBS</span>
+    		<br />
+    		<span class="h2">oj.ncu.edu.cn</span>
+    	</div>
+    </div>
+
+    <!-- 内容部分 -->
+    <div class="main">
+
+    	<!-- 左配色 -->
+    	<div class="background_left">
+    	</div>
+
+    	<!-- 内容表单部分 -->
+      <form action="{% url 'users:register' %}" method="post" class="form">
+      {% csrf_token %}
+        <div class="username_div">
+        	<div class="username_position">
+	          <label class="username_label">用户名</label>
+	          {{ form.username }}
+	        </div>
+        </div>
+
+        <div class="email_div">
+          <div class="email_position">    
+	          <label class="email_label">邮箱</label>
+	          {{ form.email }}
+	          {{ form.email.errors }}
+	        </div>
+        </div>
+
+        <div class="password1_div">  	
+        	<div class="password1_position">
+	          <label class="password1_label">密码</label>
+	          {{ form.password1 }}
+	        </div>
+				</div>
+
+        <div class="password2_div">
+        	<div class="password2_position">
+	          <label class="password2_label">重复密码</label>
+	          {{ form.password2 }}
+	          {{ form.password2.errors }}
+	        </div>
+        </div>
+
+        <div class="sex_div">
+        	<div class="sex_position">
+	          <label class="sex_label"><br />性别</label>
+	          {{ form.sex }}
+	        </div>
+        </div>
+
+	      <div class='button_register'> 
+	        <button type="submit" class="submit">注册</button>
+	        <button type="reset" class="reset">清除</button>
+        </div>
+      </form>
+      <input type="hidden" name="next" value="{{ next }}"/>
+
+	          <!-- 右配色 -->
+	    <div class="background_right">
+	    </div>
+    </div>
+
+
+
+
+    <!-- 底部 --> 
+    <div class="footer">
+    	<p class="copyright">南昌大学信息工程学院</P>
+    </div>
+  </body>
+</html>
