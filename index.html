@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+{% load ncu_tags %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NCU-BBS</title>
+  <style type="text/css">
+    html,body{margin:0; padding:0;}
+    td{padding:0;}
+    a{text-decoration:none; color:#556;}
+    div{display:block;}
+
+    #Top{height:44px; background:#FFFFFF; border-bottom:1px solid rgba(0,0,0,0.22);}
+    #Wrapper{background:#E2E2E2;}
+    .box{background:#FFFFFF;}
+    #Bottom{background:#FFFFFF;}
+    #right_box{float:right; width:270px; margin-right:20px; background:#31EBFF; min-height:600px;}
+    #main{width:auto; margin:0 310px 0 20px;}
+    #q{margin-left:30px; margin-top:2px; width:230px; height:26px; border:none; outline:none;}
+    .content{min-width:700px; max-width:1100px; min-height:600px; margin:0 auto 0 auto;}
+    .sep5{height:5px;background:red;}
+    .sep20{height:20px; background:red;}
+    .inner{text-align:left; font-size:14px; line-height:150%; padding:10px; border-top:1px solid rgba(0,0,0,0.22); border-left:1px solid rgba(0,0,0,0.22); border-right:1px solid rgba(0,0,0,0.22);}
+    a.category:link,a.category:visited{display:inline-block; font-size:14px; line-height:14px; margin-right:5px; padding:5px 8px 5px 8px; background:#FFFFFF;}
+    a.category:hover,a.category:active{display:inline-block; coor:#000000; font-size:14px; line-height:14px; margin-right:5px; padding:5px 8px 5px 8px; background:#E3E2E2;}
+    .cell_item{border:1px solid rgba(0,0,0,0.22); padding:10px;}
+    .instructions{font-size:11px; color:#ccc;}
+    .post_title{font-size:16px; line-height:130%; word-wrap:break-word;}
+    .post_title:hover{text-decoration:underline;}
+
+  </style>
+</head>
+<body>
+  <!-- 头部 -->
+  <div id="Top">
+    <div class="content">
+      <div style="padding-top:6px;">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tbody>
+            <tr>
+              <td width="110" align="left">
+                <a href="#"><img src="http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/b8kyd.bYfjp77oXaxh9OXXOLNMrAkWIghTKRZAOQK38!/r/dPMAAAAAAAAA" width="94" height="30" style="display:block;"></a>
+              </td>
+
+              <td width="auto" align="left">
+                <div style="width:345px;">
+                  <form role="search" method="get" id="searchform" action="{% url 'haystack_search' %}">
+                    <div style="width:276px; height:30px;background-size: 276px 30px; background-image:url(http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/J6S3gNkG2V2ykY9RoHYLFotSDvjb9DTnGIfJrIC*LeQ!/r/dGgBAAAAAAAA); background-repeat:no-repeat;" >
+                      <input type="search" name="q" id="q" required>
+                    </div>
+                  </form>
+                </div>
+              </td>
+
+              <td width="570" align="right">
+                {% if user.is_authenticated %}
+                  <a href="{% url 'index:information' %}">{{ user.username }}</a>
+                  <a href="{% url 'logout' %}?next={{ request.path }}">注销</a>
+                  <a href="{% url 'password_change' %}?next={{ request.path }}">修改密码</a>
+                  <a href="{% url 'index:newArticle' %}?next={{ request.path }}">创作新帖</a>
+                {% else %}
+                  <a href="{% url 'login' %}?next={{ request.path }}">登录</a>
+                  <a href="{% url 'users:register' %}?next={{ request.path }}">注册</a>
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 内容部分 -->
+  <div id="Wrapper">
+    <div class="content">
+      <div id="right_box">
+      </div>
+      <div id="main">
+        <div class="sep20">
+        </div>
+
+        <div class="box">
+
+          <div class="inner" style="background:#FFFFFF; border-top-left-radius:3px; border-top-right-radius:3px">
+            {% for category in category_list %}
+              <a href="{% url 'index:classify' category %} " class="category">{{ category }}</a>
+            {% endfor %}
+          </div>
+
+          {% for post in post_list %}
+          <div class="cell_item">
+            <table cellpadding="0" cellspacing="0" border="0" width="100%">
+              <tbody>
+                <tr>
+                  <td width="50" valign="top" align="center">
+                    <a href="{% url 'index:information' %}"><img src="/img/{{ post.author.head_sculpture }}" width="50"></a>
+                  </td>
+
+                  <td width="10">
+                  </td>
+
+                  <td width="auto" valign="middle">
+                    <span class="post_title" style="border:1px solid red; width:auto; padding:0;"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></span>
+                    <div class="sep5"></div>
+                    <span class="instructions">
+                        {{ post.category }}
+                      &nbsp;&nbsp;•&nbsp;&nbsp;
+                        {% get_tag post.id as posttag %}
+                          {{ posttag.tag }}
+                      &nbsp;&nbsp;•&nbsp;&nbsp;
+                        <strong style="color:#6F6F6F">
+                          {{ post.author }}
+                        </strong>
+                      &nbsp;&nbsp;•&nbsp;&nbsp;
+                        {{ post.publish_date|date:'Y-m-d H:m:s' }}
+                    </span>
+                  </td>
+
+                  <td width="70" align="right" valign="middle">
+                     {{ post.view_number }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          {% endfor %}
+
+        </div>
+
+        <div class="sep20">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div id="Bottom">
+    <div class="content">
+    </div>
+  </div>
+
+</body>
+</html>
