@@ -11,7 +11,7 @@
     div{display:block;}
 
     #Top{height:44px; background:#FFFFFF; border-bottom:1px solid rgba(0,0,0,0.22);}
-    #Wrapper{background:#E2E2E2; min-height:700px;}
+    #Wrapper{background:#E2E2E2; min-height:800px;}
     .box{background:#FFFFFF;}
     #Bottom{background:#FFFFFF;}
     #right_box{float:right; width:270px; margin-right:20px;}
@@ -21,6 +21,7 @@
     .sep3{height:3px;}
     .sep5{height:5px;}
     .sep20{height:20px;}
+    .sep25{height:25px;}
     .inner{text-align:left; font-size:14px; line-height:150%; padding:10px; border-top:1px solid rgba(0,0,0,0.22); border-left:1px solid rgba(0,0,0,0.22); border-right:1px solid rgba(0,0,0,0.22);}
     a.category:link,a.category:visited{display:inline-block; font-size:14px; line-height:14px; margin-right:5px; padding:5px 8px 5px 8px; background:#FFFFFF;}
     a.category:hover,a.category:active{display:inline-block; color:#000000; font-size:14px; line-height:14px; margin-right:5px; padding:5px 8px 5px 8px; background:#E3E2E2;}
@@ -45,7 +46,7 @@
           <tbody>
             <tr>
               <td width="110" align="left">
-                <a href=""><img src="http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/b8kyd.bYfjp77oXaxh9OXXOLNMrAkWIghTKRZAOQK38!/r/dPMAAAAAAAAA" width="94" height="30" style="display:block;"></a>
+                <a href="{% url 'index:index' %}"><img src="http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/b8kyd.bYfjp77oXaxh9OXXOLNMrAkWIghTKRZAOQK38!/r/dPMAAAAAAAAA" width="94" height="30" style="display:block;"></a>
               </td>
 
               <td width="auto" align="left">
@@ -60,18 +61,18 @@
 
               <td width="570" align="right">
                 {% if user.is_authenticated %}
-                  <a href="" style="font-size:16px;">首页</a>
+                  <a href="{% url 'index:index' %}" style="font-size:15px;">首页</a>
                   &nbsp;
-                  <a href="{% url 'index:information' %}" style="font-size:16px;">{{ user.username }}</a>
+                  <a href="{% url 'index:information' %}" style="font-size:15px;">{{ user.username }}</a>
                   &nbsp;
-                  <a href="{% url 'logout' %}?next={{ request.path }}" style="font-size:16px;">注销</a>
+                  <a href="{% url 'logout' %}?next={{ request.path }}" style="font-size:15px;">注销</a>
                   &nbsp;
-                  <a href="{% url 'password_change' %}?next={{ request.path }}" style="font-size:16px;">修改密码</a>
+                  <a href="{% url 'password_change' %}?next={{ request.path }}" style="font-size:15px;">修改密码</a>
                   &nbsp;
                 {% else %}
-                  <a href="{% url 'login' %}?next={{ request.path }}" style="font-size:16px;">登录</a>
+                  <a href="{% url 'login' %}?next={{ request.path }}" style="font-size:15px;">登录</a>
                   &nbsp;
-                  <a href="{% url 'users:register' %}?next={{ request.path }}" style="font-size:16px;">注册</a>
+                  <a href="{% url 'users:register' %}?next={{ request.path }}" style="font-size:15px;">注册</a>
                   &nbsp;
                 {% endif %}
               </td>
@@ -89,7 +90,7 @@
       <div id="right_box">
         <div class="sep20">
         </div>
-        <div class="box">
+        <div class="box" style="border:1px solid rgba(0,0,0,0.22); box-shadow:1px 2px 8px #ADACAC;">
           {% if user.is_authenticated %}
             <div class="cell">
               <table cellpadding="0" cellspacing="0" border="0" width="100%">
@@ -164,6 +165,7 @@
         </div>
       </div>
 
+      <!-- 帖子区域 -->
       <div id="main">
         <div class="sep20">
         </div>
@@ -217,16 +219,39 @@
 
         </div>
 
-        <div class="sep20">
+        <div class="box" align="right" style="padding-top:10px; padding-right:5px; padding-bottom:3px; font-size:14px; border:1px solid rgba(0,0,0,0.22); box-shadow: 0px 2px 0px #ADACAC;">
+          <form action="" method="get">
+            {% if post_list.paginator %}
+            {% if post_list.has_previous %}
+              <a href="?page={{ post_list.previous_page_number }}" style="">上一页</a>
+            {% endif %}
+            {% for num in post_list.paginator.page_range %}
+              {% circle_page post_list.number num %}
+            {% endfor %}
+            {% if post_list.has_next %}
+              <a href="?page={{ post_list.next_page_number }}">下一页</a>
+            {% endif %}
+              <span class="current">第{{ post_list.number }}页/共{{ post_list.paginator.num_pages }}页&nbsp;</span>
+              <input name="page" type="text" style="width:35px; border:1px solid #3C3A3A; border-radius:3px;">
+              <input class="button" type="submit" style="width:40px; font-size:10px; padding:2px auto 2px auto;" value="跳转">
+          </form>
+          {% endif %}
+        </div>
+        <div class="sep25">
         </div>
       </div>
     </div>
   </div>
 
   <!-- 底部 -->
-  <div id="Bottom">
-    <div class="content">
+  <div id="Bottom" align="center">
+    <table><tbody><tr><td align="center" style="height:80px;">
+    <div align="center" style="font-size:10px; color:#929292;">
+      南大学子自己的OnlineJungle
+      <br />
+      oj.ncu.edu.cn
     </div>
+    </td></tr></tbody></table>
   </div>
 
 </body>
