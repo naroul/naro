@@ -88,8 +88,10 @@
     <div class="content">
 
       <div id="right_box">
+
         <div class="sep20">
         </div>
+
         <div class="box" style="border:1px solid rgba(0,0,0,0.22); box-shadow:1px 2px 8px #ADACAC;">
           {% if user.is_authenticated %}
             <div class="cell">
@@ -163,6 +165,42 @@
             </div>
           {% endif %}
         </div>
+
+        <div class="sep20"></div>
+
+        <div class="sep20" style="background:#FFFFFF; border:1px solid rgba(0,0,0,0.22); box-shadow:1px 1px 8px #ADACAC;"></div>
+
+        <div class="sep20"></div>
+
+
+
+        <!-- 热帖block部分 -->
+
+        <div class="box" style="border:1px solid rgba(0,0,0,0.22); box-shadow:1px 2px 8px #ADACAC;">
+          {% get_heat_article as heat_article %}
+          {% for article in heat_article %}
+            <div class="cell">
+              <table>
+                <tbody>
+                  <tr>
+                    <td width="auto" valign="middle">
+                      <a href="{% url 'index:information' %}"><img src="/img/{{ article.author.head_sculpture }}" class="image_border" width="50"></a>
+                    </td>
+                    <td width="10">
+                    </td>
+                    <td>
+                      <a href="{{ article.get_absolute_url }}" class="word_hover" style="font-size:12px; color:#5B5A5A">{{ article.title }}</a>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- 热帖block部分 -->
+
+
       </div>
 
       <!-- 帖子区域 -->
@@ -170,8 +208,13 @@
         <div class="sep20">
         </div>
 
-        <div class="box">
 
+
+        <!-- 主页block部分开始 -->
+
+
+
+        <div class="box">
           <div class="inner" style="background:#FFFFFF; border-top-left-radius:3px; border-top-right-radius:3px">
             {% for category in category_list %}
               <a href="{% url 'index:classify' category %} " class="category">{{ category }}</a>
@@ -219,8 +262,8 @@
 
         </div>
 
-        <div class="box" align="right" style="padding-top:10px; padding-right:5px; padding-bottom:3px; font-size:14px; border:1px solid rgba(0,0,0,0.22); box-shadow: 0px 2px 0px #ADACAC;">
-          <form action="" method="get">
+        <div class="box" align="right" style="padding-top:10px; padding-right:5px; padding-bottom:3px; font-size:14px; border:1px solid rgba(0,0,0,0.22); border-bottom: 3px solid rgba(0,0,0,0.22);">
+          <form method="get">
             {% if post_list.paginator %}
             {% if post_list.has_previous %}
               <a href="?page={{ post_list.previous_page_number }}" style="">上一页</a>
@@ -237,6 +280,13 @@
           </form>
           {% endif %}
         </div>
+
+
+
+        <!-- 主页block部分结束-->
+
+
+
         <div class="sep25">
         </div>
       </div>
