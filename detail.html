@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load ncu_tags %}
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>NCU-BBS</title>
+  <link rel="stylesheet" href="{% static 'NCU_OJ/css/163css.css' %}">
+  <style type="text/css">
+    html,body{margin:0; padding:0;}
+    td{padding:0;}
+    a{text-decoration:none; color:#556;}
+    div{display:block;}
+
+    #Top{height:44px; background:#FFFFFF; border-bottom:1px solid rgba(0,0,0,0.22);}
+    #Wrapper{background:#E2E2E2; min-height:800px;}
+    .box{background:#FFFFFF;}
+    #Bottom{background:#FFFFFF;}
+    #right_box{float:right; width:270px; margin-right:20px;}
+    #main{width:auto; margin:0 310px 0 20px;}
+    #q{margin-left:30px; margin-top:2px; width:230px; height:26px; border:none; outline:none;}
+    .content{min-width:700px; max-width:1100px; margin:0 auto 0 auto;}
+    .sep3{height:3px;}
+    .sep5{height:5px;}
+    .sep20{height:20px;}
+    .sep25{height:25px;}
+    .inner{text-align:left; font-size:14px; line-height:150%; padding:10px; border-top:1px solid rgba(0,0,0,0.22); border-left:1px solid rgba(0,0,0,0.22); border-right:1px solid rgba(0,0,0,0.22);}
+    a.category:link,a.category:visited{display:inline-block; font-size:14px; line-height:14px; margin-right:5px; padding:5px 8px 5px 8px; background:#FFFFFF;}
+    a.category:hover,a.category:active{display:inline-block; color:#000000; font-size:14px; line-height:14px; margin-right:5px; padding:5px 8px 5px 8px; background:#E3E2E2;}
+    .cell_item{border:1px solid rgba(0,0,0,0.22); padding:10px;}
+    .instructions{font-size:11px; color:#ccc;}
+    .post_title{font-size:16px; line-height:130%; word-wrap:break-word;}
+    .post_title:hover{text-decoration:underline;}
+    .page_view{display:inline-block; margin-right:10px; background:#aab0c6; border-radius:12px; text-align:center;  color:#FFFFFF; font-size:15px; line-height:12px; font-weight:bold; padding:2px 10px 2px 10px;}
+    .page_view:hover{display:inline-block; margin-right:10px; background:#5C5A5A; border-radius:12px; text-align:center;  color:#FFFFFF; font-size:15px; line-height:12px; font-weight:bold; padding:2px 10px 2px 10px;}
+    .cell{padding:10px; border-bottom:1px solid rgba(0,0,0,0.22);}
+    .image_border{border-radius:4px;}
+    .word_hover:hover{text-decoration:underline;}
+    .fr{float:right; text-align:right;}
+    .header {padding: 10px; font-size: 15px; line-height: 120%; text-align: left; border-bottom: 1px solid #e2e2e2; overflow: auto;}
+    .gray{color:#999;}
+    .bottom_bar{background:#eee; padding:5px;}
+    .bottom_bar_style{font-size:12px; line-height:12px; color:333; text-shadow: 0px 1px 0px #fff;}
+    .add_collection{display:inline-block; padding:2px;}
+    .add_collection:hover,.add_collectino:active{display:inline-block; padding:2px; border:1px solid #9B9B9B; border-radius: 12px;}
+
+  </style>
+  <script type="text/javascript" src="{% static 'NCU_OJ/js/jquery.min.js'%}"></script>
+</head>
+<body>
+  <!-- 头部 -->
+  <div id="Top">
+    <div class="content">
+      <div style="padding-top:6px;">
+        <table cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tbody>
+            <tr>
+              <td width="110" align="left">
+                <a href="{% url 'index:index' %}"><img src="http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/b8kyd.bYfjp77oXaxh9OXXOLNMrAkWIghTKRZAOQK38!/r/dPMAAAAAAAAA" width="94" height="30" style="display:block;"></a>
+              </td>
+
+              <td width="auto" align="left">
+                <div style="width:345px;">
+                  <form role="search" method="get" id="searchform" action="{% url 'haystack_search' %}">
+                    <div style="width:276px; height:30px;background-size: 276px 30px; background-image:url(http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/J6S3gNkG2V2ykY9RoHYLFotSDvjb9DTnGIfJrIC*LeQ!/r/dGgBAAAAAAAA); background-repeat:no-repeat;" >
+                      <input type="search" name="q" id="q" required>
+                    </div>
+                  </form>
+                </div>
+              </td>
+
+              <td width="570" align="right">
+                {% if user.is_authenticated %}
+                  <a href="{% url 'index:index' %}" style="font-size:15px;">首页</a>
+                  &nbsp;
+                  <a href="{% url 'index:information' %}" style="font-size:15px;">{{ user.username }}</a>
+                  &nbsp;
+                  <a href="{% url 'logout' %}?next={{ request.path }}" style="font-size:15px;">注销</a>
+                  &nbsp;
+                  <a href="{% url 'password_change' %}?next={{ request.path }}" style="font-size:15px;">修改密码</a>
+                  &nbsp;
+                {% else %}
+                  <a href="{% url 'login' %}?next={{ request.path }}" style="font-size:15px;">登录</a>
+                  &nbsp;
+                  <a href="{% url 'users:register' %}?next={{ request.path }}" style="font-size:15px;">注册</a>
+                  &nbsp;
+                {% endif %}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- 内容部分 -->
+  <div id="Wrapper">
+    <div class="content">
+
+      <div id="right_box">
+        <div class="sep20">
+        </div>
+        <div class="box" style="border:1px solid rgba(0,0,0,0.22); box-shadow:1px 2px 8px #ADACAC;">
+          {% if user.is_authenticated %}
+            <div class="cell">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                  <tr>
+                    <td width="50" valign="top";>
+                      <a href="{% url 'index:information' %}"><img src="/img/{{ user.head_sculpture }}" border="0" class="image_border" style="max-width:50px; max-height:50px;"></a>
+                    </td>
+                    <td width="10" valign="top">
+                    </td>
+                    <td align="left" style="">
+                      <a href="{% url 'index:information' %}">{{ user.username }}</a>
+                    </td>  
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="padding-top:5px; padding-bottom:10px; border-bottom:1px solid rgba(0,0,0,0.22);">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                  <tr>
+                    <td width="49%" align="center">
+                      <a href="{% url 'index:createArticle' %}" style="display:block;" class="word_hover">
+                      	{% get_createnumber user.id as create_number %}
+                        <span style="font-size:16px;">{{ create_number }}</span>
+                        <div class="sep3"></div>
+                        <span style="color:#ABA9A9">我的帖子</span>
+                      </a>
+                    </td>
+                    <td width="1%" style="background:rgba(0,0,0,0.22);">
+                    </td>
+                    <td wdith="49%" align="center">
+                      <a href="{% url 'index:collectArticle' %}" style="display:block;" class="word_hover">
+                      	{% get_collectnumber user.id as collect_number %}
+                        <span style="font-size:16px;">{{ collect_number }}</span>
+                        <div class="sep3"></div>
+                        <span style="color:#ABA9A9">我的收藏</span>
+                      </a>
+                    </td>  
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="cell">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                  <tr>
+                    <td width="40" valign="bottom">
+                      <img src="http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/w5w3t64Wdo80Y2CgiYR8HA1wRDHhlF9VEf3hYiAbNPY!/r/dEIBAAAAAAAA" width="40">
+                    </td>
+                    <td width="10"></td>
+                    <td>
+                      <span style="color:#959191"><a href="{% url 'index:newArticle' %}?next={{ request.path }}" class="word_hover">创作新帖</a></span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          {% else %}
+            <div class="cell" align="center">
+              <span style="font-size:15px; color:#7F7E7E; font-weight:bold;">亲~赶紧加入我们吧！(づ￣3￣)づ</span>
+            </div>
+            <div class="cell" align="center">
+              <button><a href="{% url 'users:register' %}?next={{ request.path }}" style="font-weight:bold;">现在注册</a></button>
+            </div>
+            <div style="height:20px; background:#E2E2E2;"></div>
+            <div class="cell" align="center">              
+              <span style="font-size:15px; color:#7F7E7E; font-weight:bold;">已注册用户请点击</span>
+            </div>
+            <div class="cell" align="center">
+              <button><a href="{% url 'login' %}?next={{ request.path }}" style="font-weight:bold;">现在登录</a></button>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- 主要区域 -->
+      <div id="main">
+
+        <div class="sep20">
+        </div>
+
+
+        <!-- 详情页面block开始 -->
+
+
+
+
+        <div class="box">
+
+        	<div class="header">
+	        	<div class="fr">
+	        		<a href="{% url 'index:information' %}"><img src="/img/{{ post.author.head_sculpture }}" class="image_border" style="max-width:70px; max-height:70px;"></a>
+	        	</div>
+
+	        	<a href="{% url 'index:index' %}" class="gray">NUC-BBS</a>
+	        	<span class="chevron">&nbsp;›&nbsp;</span>
+	        	<a href="#" class="gray">{{ post.category }}</a>
+	        	<div style="height:15px;"></div>
+	        	<h1 style="font-size:24px; font-weight:500; line-height:150%; margin:0px 0px 10px 0px; padding:0px;"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h1>
+	        	<small class="gray">{{ post.author }}&nbsp;·&nbsp;{{ posttag.tag }}&nbsp;·&nbsp;在{{ post.publish_date|date:'Y-m-d H:m:s' }}创作&nbsp;·&nbsp;{{ post.view_number }}次点击</small>
+	        </div>
+
+	        <div class="box" style="padding:10px;">
+	        	<span style="font-size:14px;">{{ post.text|safe }}</span>
+	        	<div class="sep5"></div>
+	        	<img src="/img/{{ post.head_img }}" style="max-width:300px;">
+	        </div>
+
+	        <div class="bottom_bar">
+					    <a href="{% url 'index:collect' post.id %}?next={{ request.path }}" class="bottom_bar_style add_collection">{{ collection }}</a>
+					    <input type="hidden" name="next" value="{{ next }}"/>
+					    <div class="gray fr" style="font-size:11px; line-height:12px; padding-top:4px;">{{ post.view_number }}次点击
+					    </div>
+	        </div>
+
+	        <div class="sep20" style="background:#D26464;"></div>
+
+	        <div style="padding:10px;">
+	        	<script type="text/javascript">
+					    $(function(){
+					    	$(".hf").click(function(){
+					    		var focus = $(this).parents(".wrapper").find("#focus");
+					    		if(focus.css("display")=="none")
+					    		{
+					    		   focus.show();this.innerHTML = "收起";
+					    		}else
+					    		{
+					    		  focus.hide(); this.innerHTML = "回复";
+					    		}
+					        });
+					    	$("form").submit(function(){
+					    	   var textarea = $(this).find("#textarea");
+					    	   if(textarea.val()==""||textarea.val()=="请输入内容")
+					    	   {
+					    	      textarea.blur();
+					    	      return false;
+					    	   }
+					    	});
+					    });
+					   </script>
+	        	{% if comment %}
+						{% build_comment_tree comment request.path %}
+						{% else %}
+						<p>暂无评论</p>
+						{% endif %}
+						<form action="{% url 'index:detail' post.pk %}" method="post">
+					    {% csrf_token %}
+					    <textarea name="comment" maxlength="10000" style="display:block; padding:5px; margin:0; font-size:14px; border:1px solid rgba(0,0,0,0.22); border-radius:3px; overflow:hidden; word-wrap:break-word; resize:none; width:100%; height:110px; box-sizing:border-box; max-width:750px;" onfocus="if(value=='说点什么吧(づ￣3￣)づ╭～...'){value=''}" onblur="if (value ==''){value='说点什么吧(づ￣3￣)づ╭～...'}"></textarea>
+					    <div class="sep5"></div>
+					    <input type="submit" value="提交评论">
+					    <input type="hidden" name="next" value="{{ request.path }}"/>
+						</form>
+	        </div>
+
+        </div>
+
+
+
+
+        <!-- 详情页面block结束 -->
+
+
+
+
+        <div class="sep25">
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部 -->
+  <div id="Bottom" align="center">
+    <table><tbody><tr><td align="center" style="height:80px;">
+    <div align="center" style="font-size:10px; color:#929292;">
+      南大学子自己的OnlineJungle
+      <br />
+      oj.ncu.edu.cn
+    </div>
+    </td></tr></tbody></table>
+  </div>
+
+</body>
+</html>
