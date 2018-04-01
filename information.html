@@ -98,8 +98,10 @@
     <div class="content">
 
       <div id="right_box">
+
         <div class="sep20">
         </div>
+
         <div class="box" style="border:1px solid rgba(0,0,0,0.22); box-shadow:1px 2px 8px #ADACAC;">
           {% if user.is_authenticated %}
             <div class="cell">
@@ -124,7 +126,7 @@
                   <tr>
                     <td width="49%" align="center">
                       <a href="{% url 'index:createArticle' %}" style="display:block;" class="word_hover">
-                      	{% get_createnumber user.id as create_number %}
+                        {% get_createnumber user.id as create_number %}
                         <span style="font-size:16px;">{{ create_number }}</span>
                         <div class="sep3"></div>
                         <span style="color:#ABA9A9">我的帖子</span>
@@ -134,7 +136,7 @@
                     </td>
                     <td wdith="49%" align="center">
                       <a href="{% url 'index:collectArticle' %}" style="display:block;" class="word_hover">
-                      	{% get_collectnumber user.id as collect_number %}
+                        {% get_collectnumber user.id as collect_number %}
                         <span style="font-size:16px;">{{ collect_number }}</span>
                         <div class="sep3"></div>
                         <span style="color:#ABA9A9">我的收藏</span>
@@ -182,102 +184,63 @@
 
         <div class="sep20"></div>
 
+
+
+        {% block top_post %}
+        {% endblock %}
+
+
       </div>
 
       <!-- 主要区域 -->
       <div id="main">
-
         <div class="sep20">
         </div>
 
 
-        <!-- 详情页面block开始 -->
-
+        <!-- 个人信息页面BLOCK部分结束 -->
 
         <div class="box">
 
-        	<div class="header">
-	        	<div class="fr">
-	        		<a href="{% url 'index:information' %}"><img src="/img/{{ post.author.head_sculpture }}" class="image_border" style="max-width:70px; max-height:70px;"></a>
-	        	</div>
-
-	        	<a href="{% url 'index:index' %}" class="gray">NUC-BBS</a>
-	        	<span class="chevron">&nbsp;›&nbsp;</span>
-	        	<a href="#" class="gray">{{ post.category }}</a>
-	        	<div style="height:15px;"></div>
-	        	<h1 style="font-size:24px; font-weight:500; line-height:150%; margin:0px 0px 10px 0px; padding:0px;"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h1>
-	        	<small class="gray">{{ post.author }}&nbsp;·&nbsp;{{ posttag.tag }}&nbsp;·&nbsp;在{{ post.publish_date|date:'Y-m-d H:m:s' }}创作&nbsp;·&nbsp;{{ post.view_number }}次点击</small>
-	        </div>
-
-	        <div class="box" style="padding:10px;">
-	        	{% autoescape off %}
-	        	<span style="font-size:14px;">{{ post.text|spacify }}</span>
-	        	{% endautoescape %}
-	        	<div class="sep5"></div>
-	        	<img src="/img/{{ post.head_img }}" style="max-width:300px;">
-	        </div>
-
-	        <div class="bottom_bar">
-					    <a href="{% url 'index:collect' post.id %}?next={{ request.path }}" class="bottom_bar_style add_collection">{{ collection }}</a>
-					    <input type="hidden" name="next" value="{{ next }}"/>
-					    <div class="gray fr" style="font-size:11px; line-height:12px; padding-top:4px;">{{ post.view_number }}次点击
-					    </div>
-	        </div>
-
-	        <div class="sep20" style="background:#E2E2E2;"></div>
-
-	        <div style="padding:10px;">
-	        	<script type="text/javascript">
-					    $(function(){
-					    	$(".hf").click(function(){
-					    		var focus = $(this).parents(".wrapper").find("#focus");
-					    		if(focus.css("display")=="none")
-					    		{
-					    		   focus.show();this.innerHTML = "收起";
-					    		}else
-					    		{
-					    		  focus.hide(); this.innerHTML = "回复";
-					    		}
-					        });
-					    	$("form").submit(function(){
-					    	   var textarea = $(this).find("#textarea");
-					    	   if(textarea.val()==""||textarea.val()=="请输入内容")
-					    	   {
-					    	      textarea.blur();
-					    	      return false;
-					    	   }
-					    	});
-					    });
-					   </script>
-	        	{% if comment %}
-						{% build_comment_tree comment request.path %}
-						{% else %}
-						<p>&nbsp;&nbsp;&nbsp;暂无评论</p>
-						<div class="sep20"></div>
-						{% endif %}
-						<form action="{% url 'index:detail' post.pk %}" method="post">
-					    {% csrf_token %}
-					    <div class="sep20"></div>
-					    <textarea name="comment" maxlength="10000" style="display:block; padding:5px; margin:0; font-size:14px; border:1px solid rgba(0,0,0,0.22); border-radius:3px; overflow:hidden; word-wrap:break-word; resize:none; width:100%; height:110px; box-sizing:border-box; max-width:750px;" onfocus="if(value=='说点什么吧(づ￣3￣)づ╭～...'){value=''}" onblur="if (value ==''){value='说点什么吧(づ￣3￣)づ╭～...'}"></textarea>
-					    <div class="sep5"></div>
-					    <input type="submit" value="提交评论">
-					    <input type="hidden" name="next" value="{{ request.path }}"/>
-						</form>
-	        </div>
+        	<div style="padding:10px;">
+              <table cellpadding="0" cellspacing="0" border="0" width="100%">
+                <tbody>
+                  <tr>
+                    <td width="40%" valign="middle" align="right">
+                    	<img src="/img/{{ user.head_sculpture }}" style="max-width:200px; max-height:200px;">
+                    </td>
+                    <td width="5%"></td>
+                    <td valign="top">
+                    	<span style="font-size:30px;">{{ user.username }}</span>
+                    	&nbsp;&nbsp;&nbsp;&nbsp;
+                    	<a href="{% url 'index:userChange' %}?next={{ request.path }}" class="word_hover" style="font-size:2px;">个人信息修改</a>
+                    	<div class="sep5"></div>
+                    	<div class="sep5"></div>
+                    	<span style="font-size:8px;">{{ user.sex }}</span>
+                    	<div class="sep25"></div>
+                    	{% get_createnumber user.id as create_number %}
+                    	<a href="{% url 'index:createArticle' %}" class="word_hover" style="font-size:14px; color:#8B7474;">创建了{{ create_number }}篇帖子</a>
+                    	&nbsp;&nbsp;&nbsp;&nbsp;
+                    	{% get_collectnumber user.id as collect_number %}
+                    	<a href="{% url 'index:collectArticle' %}" class="word_hover" style="font-size:14px; color:#8B7474;">收藏了{{ collect_number }}篇帖子</a>
+                    	<div class="sep20"></div>
+                    	<span style="font-weight:bold;">出生于：</span>&nbsp;&nbsp;&nbsp;<span>{{ user.born_date }}</span>
+                    	<div class="sep5"></div>
+                    	<div class="sep5"></div>
+											<span style="font-weight:bold;">注册于：</span>&nbsp;&nbsp;&nbsp;<span>{{ user.registration_date }}</span>
+                    	
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+        	</div>
 
         </div>
 
-
-
-
-        <!-- 详情页面block结束 -->
-
-
-
+        <!-- 个人信息页面BLOCK部分结束 -->
 
         <div class="sep25">
         </div>
-
       </div>
     </div>
   </div>
@@ -295,3 +258,8 @@
 
 </body>
 </html>
+
+
+
+
+
