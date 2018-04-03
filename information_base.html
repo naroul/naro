@@ -1,0 +1,40 @@
+<!-- 个人信息页面BLOCK部分结束 -->
+
+<div class="box" style="background-image: url(http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/oVQy3o6rXku4KUDzNC00yHTge7LmHfoVp8QFh9YKRuM!/r/dDABAAAAAAAA);
+        ">
+
+    <div style="padding:10px;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tbody>
+          <tr>
+            <td width="40%" valign="middle" align="right">
+              <img src="/img/{{ user.head_sculpture }}" style="max-width:200px; max-height:200px;">
+            </td>
+            <td width="5%"></td>
+            <td valign="top">
+              <span style="font-size:30px;">{{ user.username }}</span>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              <a href="{% url 'index:userChange' %}?next={{ request.path }}" class="word_hover" style="font-size:2px;">个人信息修改</a>
+              <div class="sep5"></div>
+              <div class="sep5"></div>
+              <span style="font-size:8px;">{{ user.sex }}</span>
+              <div class="sep25"></div>
+              {% get_createnumber user.id as create_number %}
+              <a href="{% url 'index:createArticle' %}" class="word_hover" style="font-size:14px; color:#8B7474;">创建了{{ create_number }}篇帖子</a>
+              &nbsp;&nbsp;&nbsp;&nbsp;
+              {% get_collectnumber user.id as collect_number %}
+              <a href="{% url 'index:collectArticle' %}" class="word_hover" style="font-size:14px; color:#8B7474;">收藏了{{ collect_number }}篇帖子</a>
+              <div class="sep20"></div>
+              <span style="font-weight:bold;">出生于：</span>&nbsp;&nbsp;&nbsp;<span>{{ user.born_date }}</span>
+              <div class="sep5"></div>
+              <div class="sep5"></div>
+              <span style="font-weight:bold;">注册于：</span>&nbsp;&nbsp;&nbsp;<span>{{ user.registration_date }}</span> 
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+</div>
+
+<!-- 个人信息页面BLOCK部分结束 -->

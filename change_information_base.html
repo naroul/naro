@@ -1,0 +1,43 @@
+<!-- 个人信息修改页面BLOCK部分结束 -->
+
+<div class="box" style="background-image: url(http://r.photo.store.qq.com/psb?/V10zaHw54bhy4m/eSK.5TSs1ShTH4k.kXHO0UOsITn27GtMJRm80NTdgcY!/r/dEQBAAAAAAAA);
+	">
+	<form action="{% url 'index:userChange' %}" method="post" enctype="multipart/form-data">
+		{% csrf_token %}
+  	<div style="padding:10px;">
+      <table cellpadding="0" cellspacing="0" border="0" width="100%">
+        <tbody>
+          <tr>
+            <td width="40%" valign="middle" align="center">
+            	<img src="/img/{{ user.head_sculpture }}" style="max-width:200px; max-height:200px;">
+            	<div class="sep5"></div>
+          		<label style="font-size:15px;">修改头像:</label>
+          		<div class="sep5"></div>
+          		<input type="file" name="head_sculpture" value="修改头像">
+            </td>
+            <td width="5%"></td>
+            <td valign="top">
+            	<label style="font-size:15px;">用户名:</label>
+            	<div class="sep5"></div>
+            	<input type="text" name="username" value="{{ user.username }}" style="font-size:10px; color:#9B9999; height:20px; width:100px; border:1px solid #2F2E2E; border-radius:3px; outline:none;">
+            	<div class="sep20"></div>
+            	<span style="display:block; font-size:15px;">性别：</span>
+            	<div class="sep5"></div>          
+            	{{ form.sex }}	
+						  <div class="sep20"></div>
+            	<label style="font-size:15px;">出生日期</label>
+            	<div class="sep5"></div>
+            	<input type="date" name="born_date" id="born_date"/ style="font-size:10px; color:#9B9999; height:20px; width:120px; border:1px solid #2F2E2E; border-radius:3px; outline:none;">
+            	<button type="submit">提交</button>
+							<input type="hidden" name="next" value="{{ next }}"/>
+
+            </td>
+          </tr>
+        </tbody>
+      </table>
+  	</div>
+  </form>
+
+</div>
+
+<!-- 个人信息修改页面BLOCK部分结束 -->
