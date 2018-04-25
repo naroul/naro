@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>放大镜特效</title>
+<style>
+	html,body {
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+	
+	#container {
+		position: relative;	
+		width: 300px;
+		height: 200px;
+		margin: 50px;
+	}
+	
+	#small_box {
+		position: relative;
+	}
+	
+	#float_area {
+		display: none;
+		position: absolute;
+		width: 100px;
+		height: 100px;
+		background-color: #ffffcc;
+		border:1px dotted #ccc;
+		opacity: 0.5;
+		filter: alpha(opacity = 50);
+		cursor: move;
+	}
+	
+	#big_box {
+		display: none;
+		position: absolute;
+		left: 310px;
+		top: 0;
+		width: 400px;
+		height: 400px;
+		overflow: hidden;
+		border:1px dotted #ccc;  
+	}
+	
+	#big_box img{
+		position: absolute;
+		z-index: 5;
+	}
+</style>
+
+<script>
+	
+	window.onload = function() {
+		
+		var container = document.getElementById('container');
+		var small_box = document.getElementById('small_box');
+		var float_area = document.getElementById('float_area');
+		var big_box = document.getElementById('big_box');
+		var big_img = big_box.getElementsByTagName('img')[0];
+		
+		small_box.onmouseover = function() {
+			
+			float_area.style.display = 'block';
+			big_box.style.display = 'block';
+			
+			var small_box_width = small_box.offsetWidth;
+			var float_area_width = float_area.offsetWidth;
+			var big_box_width = big_box.offsetWidth;
+			var small_box_height = small_box.offsetHeight;
+			var float_area_height = float_area.offsetHeight;
+			var big_box_height = big_box.offsetHeight;
+		
+			big_img.width = big_box_width/float_area_width*small_box_width;
+			big_img.height = big_box_height/float_area_height*small_box_height;
+		}
+		
+		small_box.onmouseout = function() {
+			
+			float_area.style.display = 'none';
+			big_box.style.display = 'none';
+		}
+		
+		small_box.onmousemove = function(e) {
+			
+			var _event = e || window.event;
+
+			var float_area_left = _event.clientX - float_area.offsetWidth/2 - container.offsetLeft;
+			var float_area_top = _event.clientY - float_area.offsetHeight/2 - container.offsetTop;
+
+			if (float_area_left <= 0) {
+
+				float_area_left = 0;
+			}else if (float_area_left >= (container.offsetWidth - float_area.offsetWidth)) {
+
+				float_area_left = container.offsetWidth - float_area.offsetWidth;
+			}
+
+			if (float_area_top <= 0) {
+
+				float_area_top = 0;
+			}else if (float_area_top >= (container.offsetHeight - float_area.offsetHeight)) {
+
+				float_area_top = container.offsetHeight - float_area.offsetHeight;
+			}
+
+			float_area.style.left = float_area_left + 'px';
+			float_area.style.top = float_area_top + 'px';
+
+			big_img.style.left = -(big_box.offsetWidth/float_area.offsetWidth*float_area.offsetLeft) + 'px';
+			big_img.style.top = -(big_box.offsetHeight/float_area.offsetHeight*float_area.offsetTop) + 'px';
+			
+		}
+	
+	}
+	
+</script>
+</head>
+<body>
+	<div id="container">
+    	<div id="small_box">
+        	<div id="float_area">
+            </div>
+          <img src="imgs/1.jpg" width="300" height="200">
+        </div>
+        
+        <div id="big_box">
+        	<img src="imgs/1.jpg">
+        </div>
+    </div>
+</body>
+</html>
