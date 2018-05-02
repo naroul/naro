@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>购书</title>
+<style>
+	html,body{
+		padding: 0;
+		margin: 0;
+		width: 100%;
+		height: 100%;
+		position: relative;
+	}
+	#container{
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 50px;
+		margin: auto;
+		width: 400px;
+		border: 1px solid #ccc;
+		padding-top: 30px;
+		padding-left: 30px;
+		padding-bottom: 30px;
+	}
+	#right_side{
+		position: absolute;
+		right: 0;
+		top: 0;
+		width: 150px;
+		height: 100%;
+	}
+	#result{
+		position: absolute;
+		left: 0;
+		right: 0;
+		top: 510px;
+		margin: auto;
+		width: 400px;
+		height: 100px;
+		padding-top: 30px;
+		padding-left: 30px;
+		padding-bottom: 30px;
+		border: 1px solid #ccc;	
+	}
+	#summation{
+		display: block;
+		float: left;
+		width: 250px;
+		height: 100%;
+		font-size: 20px;
+		padding: 5px;
+	}
+	#submit{
+		width: 100px;
+		height: 100px;
+		float: right;
+		margin-right: 40px;
+		background:#F66;
+		text-align: center;
+		font-size: 18px;
+		line-height: 100px;
+	}
+	.sep20{
+		height: 20px;
+	}
+</style>
+
+</head>
+
+<body>
+	<div id="container">
+  	<input type="checkbox" value="12">书一----------12元
+    <div class="sep20"></div>
+    <input type="checkbox" value="22">书二----------22元
+    <div class="sep20"></div>
+    <input type="checkbox" value="9">书三----------9元
+    <div class="sep20"></div>
+    <input type="checkbox" value="13">书四----------13元
+    <div class="sep20"></div>
+    <input type="checkbox" value="16">书五----------16元
+    <div class="sep20"></div>
+    <input type="checkbox" value="17">书六----------17元
+    <div class="sep20"></div>
+    <input type="checkbox" value="31">书七----------31元
+    <div class="sep20"></div>
+    <input type="checkbox" value="6">书八----------6元
+    <div class="sep20"></div>
+    <input type="checkbox" value="27">书九----------27元
+    <div class="sep20"></div>
+    <input type="checkbox" value="11">书十----------11元	
+    <div id="right_side">
+    <table width="100%" height="100%"><tbody><tr><td valign='middle'>
+    	<p id="instruction_one"></p>
+        <p id="instruction_two"></p>
+        <p id="instruction_three"></p>
+    </td></tr></tbody></table>
+    </div>
+	</div>
+  <div id="result">
+  	<span id="summation"></span>
+      <div id="submit">确认购买</div>
+  </div>
+</body>
+
+<script type="text/javascript">
+	window.onload = function() {
+		var low_price;
+		var high_price;
+		var amount;
+		var checked_books = [];
+		var books = document.getElementsByTagName('input');
+		var instruction_one = document.getElementById('instruction_one');
+		var instruction_two = document.getElementById('instruction_two');
+		var instruction_three = document.getElementById('instruction_three');
+		var summation = document.getElementById('summation');
+
+		for (var i = 0; i < books.length; i++) {
+			(function(i) {
+				books[i].onclick = function() {
+					checked_books = [];
+					for (var i = 0; i < books.length; i++) {
+						if (books[i].checked == true) {
+							 checked_books.push(books[i]);
+						}
+					}
+					high_price = parseInt(checked_books[0].value);
+					low_price = parseInt(checked_books[0].value);
+					for (var i = 0; i < checked_books.length; i++) {
+						if (high_price < parseInt(checked_books[i].value)) {
+							high_price = parseInt(checked_books[i].value);
+						}
+						if (low_price > parseInt(checked_books[i].value)) {
+							low_price = parseInt(checked_books[i].value);
+						}
+					}
+					amount = 0;
+					for (var i = 0; i < checked_books.length; i++) {
+						amount += parseInt(checked_books[i].value);					
+					}
+					if (amount < 99) {
+						summation.innerHTML = '您的订单目前总额'+amount+'元，还未满99元，需支付邮费10元，确认现在结算吗？'
+					}
+					else{
+						summation.innerHTML = '您的订单目前总额'+amount+'元，确认现在结算吗？'
+					}
+					instruction_one.innerHTML = '您总共选了'+checked_books.length+'本书';
+					instruction_two.innerHTML = '其中最高单价为'+high_price+'元';
+					instruction_three.innerHTML = '其中最低单价为'+low_price+'元';
+				}
+			}(i))
+		}
+	}
+</script>
+</html>
