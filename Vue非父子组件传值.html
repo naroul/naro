@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>TodoList</title>
+	<script src="./vue.js"></script>
+	<style type="text/css">
+
+	</style>
+</head>
+<body>
+	<div id="app">
+		<child content="Yuki"></child>
+		<child content="Asuna"></child>
+	</div>
+
+	<script type="text/javascript">
+		Vue.prototype.bus = new Vue()
+
+		Vue.component('child',{
+			data: function() {
+				return {
+					dcontent: this.content
+				}
+			},
+			props: {
+				content: String
+			},
+			template: '<div @click="handleClick">{{ dcontent }}</div>',
+			methods: {
+				handleClick: function() {
+					this.bus.$emit('change', this.dcontent)
+				}
+			},
+			mounted: function() {
+				var this_ = this
+				this.bus.$on('change', function(msg) {
+					this_.dcontent = msg
+				})
+			}
+		})
+
+		var vm = new Vue({
+			el: "#app",
+		})
+	</script>
+</body>
+</html>
