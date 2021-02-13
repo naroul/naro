@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Naro's hoshizora</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="hoshizora">
+      Your browser is not supposed to canvas.
+    </canvas>
+
+    <script>
+      /**
+       * 浏览器窗口宽
+       */
+      const WIDTH = document.body.clientWidth;
+
+      /**
+       * 浏览器窗口高
+       */
+      const HEIGHT = document.body.clientHeight;
+
+      /**
+       * 离屏canvas（星星）宽
+       */
+      const hoshiCanvasWidth = 50;
+
+      /**
+       * 离屏canvas（星星）高
+       */
+      const hoshiCanvasHeight = 50;
+
+      /**
+       * 离屏canvas（流星）宽
+       */
+      const ngrboshiCanvasWidth = 400;
+
+      /**
+       * 离屏canvas（流星）高
+       */
+      const ngrboshiCanvasHeight = 20;
+
+      /**
+       * 星空背景色的色域
+       */
+      const soraColorArea = [20, 50];
+
+      /**
+       * 小星星的半径域
+       */
+      const HoshiRadiusArea = [1, 50];
+
+      /**
+       * 大星星的半径域
+       */
+      const bigHoshiRadiusArea = [21, 50];
+
+      /**
+       * 最大星星数
+       */
+      const maxHoshiNumbers = 2000;
+
+      /**
+       * 最大流星数
+       */
+      const maxNagareBoshiNumbers = 20;
+
+      /**
+       * 生成(min,max)之间的随机数，包含min和max
+       */
+      const getRandomInt = (min, max) => {
+        // 因为Math.random不能取到1，加1后向下取整保证了最大只能取到上限(max)
+        return Math.floor(Math.random() * (max - min + 1) + min);
+      };
+
+      /**
+       * 流星飞行的斜率
+       * 每次访问页面生成固定的斜率
+       */
+      const slope = getRandomInt(0, 360);
+
+      /**
+       * 存储星星对象
+       */
+      let hoshiCache = [];
+
+      /**
+       * 存储l流星星对象
+       */
+      let nagareboshiCache = [];
+
+      /**
+       * 定义主canvas对象，星空
+       */
+      let hoshizora = document.getElementById('hoshizora');
+      hoshizora.width = WIDTH;
+      hoshizora.height = HEIGHT;
+      const ctx = hoshizora.getContext('2d');
+
+      /**
+       * 定义离屏canvas，夜空背景
+       */
+      let soraCanvas = document.createElement('canvas'),
+        soraCtx = soraCanvas.getContext('2d');
+      soraCanvas.width = WIDTH;
+      soraCanvas.height = HEIGHT;
+
+      /**
+       * 存储渐变线终点的渐变色
+       * @param colorCache
+       */
+      let colorCache = getRandomInt(...soraColorArea);
+
+      /**
+       * 夜空背景色util函数
+       * 随机赋值渐变线随机位置对应的颜色
+       */
+      const loopAddColorStop = (gradient, color) => {
+        let position = 0;
+        gradient.addColorStop(position, `rgb(0,0,${colorCache})`);
+        for (let times = 0; times < getRandomInt(0, 10); times++) {
+          // 控制每次色域的变化在20之内,并且色域在[20, 50]范围内
+          colorCache =
+            colorCache - 20 > 20
+              ? colorCache + 20 < 50
+                ? getRandomInt(colorCache - 20, colorCache + 20)
+                : getRandomInt(colorCache - 20, 50)
+              : getRandomInt(20, colorCache + 20);
+          position =
+            (position = position + Math.random() * 0.3) < 1
+              ? position
+              : position - 1;
+          gradient.addColorStop(position, `rgb(0,0,${colorCache})`);
+        }
+        gradient.addColorStop(1, `rgb(0,0,${colorCache})`);
+      };
+
+      /**
+       * 定义夜空离屏canvas的样式
+       */
+      const setSora = () => {
+        //随机生成线性渐变线的方向
+        const gradientDirection = [
+          Math.random() * WIDTH,
+          Math.random() * HEIGHT
+        ];
+        let gradient = soraCtx.createLinearGradient(0, 0, ...gradientDirection);
+        loopAddColorStop(gradient, `rgb(0,0,${colorCache})`);
+        soraCtx.fillStyle = gradient;
+        soraCtx.fillRect(0, 0, WIDTH, HEIGHT);
+      };
+
+      /**
+       * 执行 setSora() 给 在离屏canvas上绘制夜空
+       */
+      setSora();
+
+      /**
+       * 在主canvas上绘制夜空离屏canvas
+       */
+      const paintSora = () => {
+        ctx.globalAlpha = 1;
+        ctx.drawImage(soraCanvas, 0, 0, WIDTH, HEIGHT);
+      };
+
+      /**
+       * 离屏canvas，星星，creater函数
+       */
+      const createHoshiCanvas = () => {
+        let hoshiCanvas = document.createElement('canvas'),
+          hoshiCtx = hoshiCanvas.getContext('2d');
+        hoshiCanvas.width = hoshiCanvasWidth;
+        hoshiCanvas.height = hoshiCanvasHeight;
+        let half = hoshiCanvas.width / 2,
+          hoshiGradient = hoshiCtx.createRadialGradient(
+            half,
+            half,
+            0,
+            half,
+            half,
+            half
+          );
+        hoshiGradient.addColorStop(0.025, 'rgb(255,255,255,1)');
+        hoshiGradient.addColorStop(0.1, 'rgb(255,255,255,0.5)');
+        hoshiGradient.addColorStop(0.25, 'rgb(255,255,255,0.1)');
+        hoshiGradient.addColorStop(1, 'rgb(255,255,255,0)');
+        hoshiCtx.fillStyle = hoshiGradient;
+        hoshiCtx.beginPath();
+        hoshiCtx.arc(half, half, half, 0, Math.PI * 2);
+        hoshiCtx.fill();
+        return hoshiCanvas;
+      };
+
+      /**
+       * 生成离屏canvas，星星
+       */
+      const hoshiCanvas = createHoshiCanvas();
+
+      /**
+       * 离屏canvas，流星,creater函数
+       */
+      const createNgrboshiCanvas = () => {
+        let ngrboshiCanvas = document.createElement('canvas'),
+          ngrboshiWrapperCanvas = document.createElement('canvas'),
+          ngrboshiWrapperCtx = ngrboshiWrapperCanvas.getContext('2d'),
+          ngrboshiCtx = ngrboshiCanvas.getContext('2d'),
+          ngrboshiGradient = ngrboshiCtx.createLinearGradient(
+            0,
+            0,
+            ngrboshiCanvasWidth,
+            0
+          );
+        ngrboshiWrapperCanvas.width = ngrboshiCanvasWidth;
+        ngrboshiCanvas.width = ngrboshiCanvasWidth;
+        ngrboshiWrapperCanvas.height = ngrboshiCanvasWidth;
+        ngrboshiCanvas.height = ngrboshiCanvasHeight;
+        ngrboshiCtx.beginPath();
+        ngrboshiCtx.arc(
+          ngrboshiCanvasWidth - ngrboshiCanvasHeight / 2,
+          ngrboshiCanvasHeight / 2,
+          ngrboshiCanvasHeight / 2,
+          Math.PI * 1.5,
+          Math.PI * 0.5
+        );
+        ngrboshiCtx.moveTo(
+          ngrboshiCanvasWidth - ngrboshiCanvasHeight / 2,
+          ngrboshiCanvasHeight
+        );
+        ngrboshiCtx.lineTo(0, ngrboshiCanvasHeight / 2);
+        ngrboshiCtx.lineTo(ngrboshiCanvasWidth - ngrboshiCanvasHeight / 2, 0);
+        ngrboshiGradient.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+        ngrboshiGradient.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+        ngrboshiGradient.addColorStop(0.6, 'rgba(255, 255, 255, 0.4)');
+        ngrboshiGradient.addColorStop(0.7, 'rgba(255, 255, 255, 0.6)');
+        ngrboshiGradient.addColorStop(1, 'rgba(255, 255, 255, 0.8)');
+        ngrboshiCtx.fillStyle = ngrboshiGradient;
+        ngrboshiCtx.fill();
+        ngrboshiWrapperCtx.translate(
+          ngrboshiWrapperCanvas.width / 2,
+          ngrboshiWrapperCanvas.height / 2
+        );
+        ngrboshiWrapperCtx.rotate((slope * Math.PI) / 360);
+        ngrboshiWrapperCtx.drawImage(
+          ngrboshiCanvas,
+          -(ngrboshiWrapperCanvas.width / 2),
+          (ngrboshiWrapperCanvas.height -
+            ngrboshiCanvas.height -
+            ngrboshiWrapperCanvas.height) /
+            2
+        );
+        return ngrboshiWrapperCanvas;
+      };
+
+      /**
+       * 生成离屏canvas，流星
+       */
+      const ngrboshiCanvas = createNgrboshiCanvas();
+
+      /**
+       * 改变生成 (Min, Max) 之间的随机数在(min, max)之间的概率 (min, max)应为(Min,Max)子区间
+       * @param probability要求是0-1之间小数为 1位的浮点数（包括0，1）
+       */
+      const changeGetRandomIntProbability = (
+        Min,
+        Max,
+        min,
+        max,
+        probability
+      ) => {
+        const belowPR = getRandomInt(1, 10) <= probability * 10;
+        if (min <= Min && max >= Max) {
+          return getRandomInt(Min, Max);
+        } else if (min <= Min && max < Max) {
+          return belowPR ? getRandomInt(Min, max) : getRandomInt(max, Max);
+        } else if (max >= Max && min >= Min) {
+          return belowPR ? getRandomInt(min, Max) : getRandomInt(Min, min);
+        } else {
+          return belowPR
+            ? getRandomInt(min, max)
+            : [getRandomInt(Min, min), getRandomInt(max, Max)][
+                getRandomInt(0, 1)
+              ];
+        }
+      };
+
+      /**
+       * 定义星星对象
+       */
+      class Hoshi {
+        /**
+         * 随机生成星星实例的缩放比例
+         * 控制半径大于15的星星比例为 0.2
+         */
+        radius = changeGetRandomIntProbability(
+          ...HoshiRadiusArea,
+          ...bigHoshiRadiusArea,
+          0.2
+        );
+
+        /**
+         * 随机生成星星实例在星空渲染的 x 坐标
+         */
+        x = getRandomInt(0, WIDTH - this.radius);
+
+        /**
+         * 随机生成星星实例在星空渲染的 y 坐标
+         */
+        y = getRandomInt(0, HEIGHT - this.radius);
+
+        /**
+         * 控制星星的透明度（亮度）
+         */
+        alpha = getRandomInt(2, 10) / 10;
+
+        /**
+         * 表示alpha是否增加
+         */
+        isAdd = true;
+
+        /**
+         * 表示alpha是否减少
+         */
+        isReduce = true;
+
+        /**
+         * 定义绘制星星实例方法
+         */
+        draw() {
+          /**
+           * 控制星星是否闪烁,概率为 1/75
+           * 每次执行requestAnimationFrame时，都会执行每颗星星的draw(),
+           * 也就是每次执行requestAnimationFrame，都会改变每颗星星的twinkle值，
+           * 每次twinkle值改变后，都会控制星星的闪烁，以此来达到随机星星的闪烁动画
+           */
+          let twinkle = getRandomInt(1, 150);
+
+          /**
+           * 亮度在0.1-1间变化
+           */
+          if (twinkle === 1 && this.alpha > 0.1) {
+            this.alpha -= 0.03;
+          } else if (twinkle === 2 && this.alpha < 1) {
+            this.alpha += 0.03;
+          }
+          ctx.globalAlpha = this.alpha;
+          ctx.drawImage(hoshiCanvas, this.x, this.y, this.radius, this.radius);
+        }
+      }
+
+      /**
+       * 定义流星对象
+       */
+      class Nagareboshi {
+        /**
+         * 流星半径
+         */
+        radius = getRandomInt(0, 2) / 10;
+
+        /**
+         * 随机生成星星实例在星空渲染的 x 坐标
+         */
+        x = getRandomInt(0, WIDTH - this.radius);
+
+        /**
+         * 随机生成星星实例在星空渲染的 y 坐标
+         */
+        y = getRandomInt(0, HEIGHT - this.radius);
+
+        /**
+         * 流星每帧飞行的距离（像素）
+         */
+        speed = getRandomInt(6, 10);
+
+        /**
+         * 初始亮度为 1
+         * 控制每一帧的亮度以此实现尾迹效果
+         */
+        alpha = 1;
+
+        /**
+         * 控制流星是否绘制
+         */
+        start = false;
+
+        /**
+         * 绘制流星
+         */
+        draw() {
+          ctx.globalAlpha = this.alpha;
+          ctx.drawImage(
+            ngrboshiCanvas,
+            this.x,
+            this.y,
+            ngrboshiCanvas.width * this.radius,
+            ngrboshiCanvas.height * this.radius
+          );
+
+          /**
+           * 飞出画面后重置流星初始位置，将start置为false，等待下一轮飞行时机
+           */
+          if (
+            this.x >= WIDTH ||
+            this.x <= 0 ||
+            this.y > HEIGHT ||
+            this.y <= 0
+          ) {
+            this.start = false;
+            this.x = getRandomInt(0, WIDTH - ngrboshiCanvasWidth * this.radius);
+            this.y = getRandomInt(
+              0,
+              HEIGHT - ngrboshiCanvasHeight * this.radius
+            );
+          } else {
+            this.x += this.speed * Math.cos((slope * Math.PI) / 360);
+            this.y += this.speed * Math.sin((slope * Math.PI) / 360);
+          }
+        }
+      }
+
+      const animation = () => {
+        ctx.clearRect(0, 0, WIDTH, HEIGHT);
+        paintSora();
+        ctx.globalCompositeOperation = 'lighter';
+        for (let i = 0; i < hoshiCache.length; i++) {
+          hoshiCache[i].draw();
+        }
+
+        for (let i = 0; i < nagareboshiCache.length; i++) {
+          if (!nagareboshiCache[i].start) {
+            nagareboshiCache[i].start = getRandomInt(1, 1000) === 1;
+          } else {
+            nagareboshiCache[i].draw();
+          }
+        }
+        // 使浏览器不停地执行animation()
+        window.requestAnimationFrame(animation);
+      };
+
+      /**
+       * 画出整个星空
+       */
+      const draw = () => {
+        // 存储星星对象
+        for (let i = 0; i < maxHoshiNumbers; i++) {
+          hoshiCache[i] = new Hoshi();
+        }
+
+        // 存储流星对象
+        for (let i = 0; i < maxNagareBoshiNumbers; i++) {
+          nagareboshiCache[i] = new Nagareboshi();
+        }
+
+        animation();
+      };
+
+      draw();
+    </script>
+  </body>
+</html>
